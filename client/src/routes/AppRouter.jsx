@@ -11,37 +11,27 @@ import Space from "../pages/Space"
 import Mood from "../pages/Mood"
 import Settings from "../pages/Settings"
 import Insights from "../pages/Insights"
+import ProtectedRoute from "../components/ProtectedRoute"
+
+const guard = (page) => <ProtectedRoute>{page}</ProtectedRoute>
 
 function AppRouter() {
   return (
     <BrowserRouter>
-
       <Routes>
-
         <Route path="/" element={<Home />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/signup" element={<Signup />} />
-
-        <Route path="/dashboard" element={<Dashboard />} />
-
         <Route path="/u/:username" element={<Profile />} />
 
-        <Route path="/feed" element={<Feed />} />
-
-        <Route path="/create" element={<CreatePost />} />
-       
-        <Route path="/space" element={<Space />} />
-
-        <Route path="/mood" element={<Mood />} />
-      
-        <Route path="/settings" element={<Settings />} />
-      
-        <Route path="/insights" element={<Insights />} />
-      
+        <Route path="/dashboard" element={guard(<Dashboard />)} />
+        <Route path="/feed" element={guard(<Feed />)} />
+        <Route path="/create" element={guard(<CreatePost />)} />
+        <Route path="/space" element={guard(<Space />)} />
+        <Route path="/mood" element={guard(<Mood />)} />
+        <Route path="/settings" element={guard(<Settings />)} />
+        <Route path="/insights" element={guard(<Insights />)} />
       </Routes>
-
     </BrowserRouter>
   )
 }

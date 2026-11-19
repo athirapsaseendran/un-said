@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar"
 import { motion } from "framer-motion"
+import { Link } from "react-router-dom"
 import FeatureCards from "../components/FeatureCards"
 import Footer from "../components/Footer"
 
@@ -17,7 +18,7 @@ function Home() {
 
         <div className="absolute w-96 h-96 bg-cyan-500/10 blur-3xl rounded-full bottom-10 right-10"></div>
 
-       <div className="absolute w-80 h-80 bg-pink-500/10 blur-3xl rounded-full left-10 bottom-20"></div>
+        <div className="absolute w-80 h-80 bg-pink-500/10 blur-3xl rounded-full left-10 bottom-20"></div>
 
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
@@ -46,19 +47,25 @@ function Home() {
           className="flex gap-4 mt-10 z-10"
         >
 
-          <button className="bg-white text-black px-7 py-3 rounded-2xl font-semibold hover:bg-zinc-300 transition duration-300">
-            Get Started
-          </button>
+          <Link to="/signup">
+            <button className="bg-white text-black px-7 py-3 rounded-2xl font-semibold hover:bg-zinc-300 transition duration-300">
+              Get Started
+            </button>
+          </Link>
 
-          <button className="border border-zinc-700 px-7 py-3 rounded-2xl hover:scale-105 hover:bg-zinc-900 transition duration-300">
-            Explore
-          </button>
+          <Link to="/login">
+            <button className="border border-zinc-700 px-7 py-3 rounded-2xl hover:scale-105 hover:bg-zinc-900 transition duration-300">
+              Login
+            </button>
+          </Link>
 
         </motion.div>
 
       </div>
+
       <FeatureCards />
       <Footer />
+
     </div>
   )
 }

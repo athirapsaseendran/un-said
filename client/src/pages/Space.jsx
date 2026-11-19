@@ -27,8 +27,13 @@ function Space() {
   }, [])
 
   const currentUserPosts = posts.filter(
-    (post) => post.username === auth.currentUser?.email
+    (post) => post.uid === auth.currentUser?.uid
   )
+
+  const name =
+    auth.currentUser?.displayName ||
+    auth.currentUser?.email?.split("@")[0] ||
+    "Soul"
 
   return (
 
@@ -38,17 +43,12 @@ function Space() {
 
         <div className="w-24 h-24 rounded-full bg-white/30 backdrop-blur-lg flex items-center justify-center text-4xl font-bold">
 
-          {auth.currentUser?.email
-            ?.split("@")[0]
-            ?.charAt(0)
-            .toUpperCase() || "A"}
+          {name.charAt(0).toUpperCase()}
 
         </div>
 
         <h1 className="text-4xl font-black mt-6">
-
-          {auth.currentUser?.email?.split("@")[0]} 🌙
-
+          {name} 🌙
         </h1>
 
         <p className="mt-3 text-white/80 leading-relaxed">
@@ -58,7 +58,6 @@ function Space() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mt-6">
-        
 
         <div className="bg-white rounded-3xl p-5">
 
@@ -96,15 +95,15 @@ function Space() {
 
       <div className="bg-white rounded-3xl p-5 mt-4">
 
-  <p className="text-zinc-400 text-sm">
-    Comfort Collection
-  </p>
+        <p className="text-zinc-400 text-sm">
+          Comfort Collection
+        </p>
 
-  <h2 className="text-3xl font-black mt-2 text-zinc-800">
-    ∞
-  </h2>
+        <h2 className="text-3xl font-black mt-2 text-zinc-800">
+          ∞
+        </h2>
 
-</div>
+      </div>
 
       <div className="bg-white rounded-3xl p-6 mt-6">
 
@@ -145,7 +144,7 @@ function Space() {
 
               </div>
 
-              <p className="text-zinc-800 leading-relaxed">
+              <p className="text-zinc-800 leading-relaxed wrap-break-words">
                 {post.text}
               </p>
 

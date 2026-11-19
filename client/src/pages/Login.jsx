@@ -1,39 +1,75 @@
-import { Link, useNavigate } from "react-router-dom"
-import { motion } from "framer-motion"
-import { useState } from "react"
-import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "../firebase"
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+
+import {
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+
+import { Eye, EyeOff } from "lucide-react";
+
+import { auth } from "../firebase";
 
 function Login() {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+
+  useEffect(() => {
+    // Autofill saved email
+    const savedEmail = localStorage.getItem("savedEmail");
+
+    if (savedEmail) {
+      setEmail(savedEmail);
+    }
+
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/feed");
+      }
+    });
+
+    return () => unsub();
+  }, [navigate]);
 
   const handleLogin = async (e) => {
-
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-
-      await signInWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
-      )
+      );
 
-      navigate("/feed")
+      const user = userCredential.user;
 
+      if (rememberMe) {
+        localStorage.setItem("savedEmail", email);
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            uid: user.uid,
+            email: user.email,
+          })
+        );
+      } else {
+        localStorage.removeItem("savedEmail");
+      }
+
+      navigate("/feed");
     } catch (error) {
-
-      alert(error.message)
-
+      alert(error.message);
     }
-  }
+  };
 
   return (
-
     <div className="min-h-screen bg-black text-white flex">
 
       {/* LEFT SIDE */}
@@ -46,21 +82,18 @@ function Login() {
           animate={{ opacity: 1, y: 0 }}
           className="z-10 max-w-md text-center px-6"
         >
-
           <h1 className="text-6xl font-black tracking-widest mb-6">
             UN-SAID 🪼
           </h1>
 
           <p className="text-zinc-400 text-lg leading-relaxed">
-            Some feelings are easier to send
-            when nobody knows it was you.
+            Some feelings are easier to send when nobody knows it was you.
           </p>
-
         </motion.div>
-
       </div>
 
       {/* RIGHT SIDE */}
+
       <div className="flex-1 flex items-center justify-center px-6">
 
         <motion.div
@@ -82,25 +115,69 @@ function Login() {
             className="space-y-5"
           >
 
+            {/* EMAIL */}
+
             <input
               type="email"
               placeholder="Email"
+              autoComplete="email"
               value={email}
-              onChange={(e) =>
-                setEmail(e.target.value)
-              }
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-black/30 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-purple-400 transition"
             />
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-              className="w-full bg-black/30 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-purple-400 transition"
-            />
+            {/* PASSWORD */}
+
+            <div className="relative">
+
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-black/30 border border-white/10 rounded-2xl px-5 py-4 pr-14 outline-none focus:border-purple-400 transition"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+
+            </div>
+
+            {/* Remember */}
+
+            <div className="flex justify-between items-center text-sm">
+
+              <label className="flex items-center gap-2 cursor-pointer">
+
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                  className="accent-purple-500"
+                />
+
+                <span className="text-zinc-400">
+                  Remember Me
+                </span>
+
+              </label>
+
+              <button
+                type="button"
+                className="text-purple-400 hover:text-purple-300"
+              >
+                Forgot Password?
+              </button>
+
+            </div>
+
+            {/* LOGIN */}
 
             <button
               type="submit"
@@ -113,7 +190,7 @@ function Login() {
 
           <p className="text-zinc-500 text-center mt-8">
 
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
 
             <Link
               to="/signup"
@@ -129,7 +206,7 @@ function Login() {
       </div>
 
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;
